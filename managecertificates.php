@@ -8,13 +8,13 @@
 	$crud = new CertificateCrud();
 	$crud->title = "Certificates";
 	$crud->table = "{$_SESSION['DB_PREFIX']}certificate";
-	$crud->dialogwidth = 500;
+	$crud->dialogwidth = 800;
 	$crud->sql = 
 			"SELECT A.*, B.name AS categoryname
 			 FROM {$_SESSION['DB_PREFIX']}certificate A
 			 INNER JOIN {$_SESSION['DB_PREFIX']}certificatecategory B
 			 ON B.id = A.categoryid
-			 ORDER BY A.name";
+			 ORDER BY B.name, A.name";
 	
 	$crud->columns = array(
 			array(
@@ -28,7 +28,7 @@
 			),
 			array(
 				'name'       => 'name',
-				'length' 	 => 60,
+				'length' 	 => 90,
 				'label' 	 => 'Name'
 			),
 			array(
@@ -46,7 +46,6 @@
 				'length' 	 => 12,
 				'label' 	 => 'Expires',
 				'type'       => 'COMBO',
-				'showInView' => false,
 				'options'    => array(
 						array(
 							'value'		=> 'Y',
@@ -58,6 +57,22 @@
 						)
 					)
 			),
+			array(
+				'name'       => 'cardnumberrequired',
+				'length' 	 => 21,
+				'label' 	 => 'Card Number Required',
+				'type'       => 'COMBO',
+				'options'    => array(
+						array(
+							'value'		=> 'Y',
+							'text'		=> 'Yes'
+						),
+						array(
+							'value'		=> 'N',
+							'text'		=> 'No'
+						)
+					)
+			)
 		);
 		
 	$crud->run();

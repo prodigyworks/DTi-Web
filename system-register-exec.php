@@ -76,6 +76,7 @@
 		exit();
 	}
 	
+	$uepasswd = mysql_escape_string($password);
 	$pwd = md5($password);
 	$loggedon = getLoggedOnMemberID();
 	
@@ -99,7 +100,7 @@
 		$qry = "INSERT INTO {$_SESSION['DB_PREFIX']}members 
 				(
 					firstname, lastname, fullname, 
-					login, passwd, mobile1,
+					login, uepasswd, passwd, mobile1,
 					email1, status, 
 					metacreateddate, metacreateduserid, 
 					metamodifieddate, metamodifieduserid
@@ -107,7 +108,7 @@
 				VALUES
 				(
 					'$fname','$lname', '$fullname', 
-					'$login', '$pwd', '$mobile',
+					'$login', '$uepasswd', '$pwd', '$mobile',
 					'$email', 'Y', 'Y', 
 					NOW(), $loggedon, 
 					NOW(), $loggedon
@@ -183,6 +184,7 @@
 				email1 = '$email', 
 				imageid = $imageid,
 				firstname = '$fname', 
+				uepasswd = '$uepasswd',
 				lastname = '$lname', 
 				mobile1 = '$mobile',
 				fullname = '$fname $lname',

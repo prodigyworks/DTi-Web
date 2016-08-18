@@ -15,6 +15,38 @@
 				viewDocument(node, "addusercertdocument.php", node, "usercertificatedocs", "usercertificateid");
 			}
 			
+			function certificateid_onchange() {
+				callAjax(
+						"finddata.php", 
+						{ 
+							sql: "SELECT expires, cardnumberrequired " +
+								 "FROM <?php echo $_SESSION['DB_PREFIX'];?>certificate " + 
+								 "WHERE id = " + $(this).val()
+						},
+						function(data) {
+							var node = data[0];
+							
+							if (node.cardnumberrequired == "Y") {
+								$("#sponsor").attr("required", true);
+								$("#sponsor").attr("disabled", false);
+								
+							} else {
+								$("#sponsor").attr("required", false);
+								$("#sponsor").attr("disabled", true);
+								$("#sponsor").val("");
+							}
+							
+							if (node.expires == "Y") {
+								$("#validyears").attr("required", true);
+								
+							} else {
+								$("#validyears").attr("required", false);
+							}
+						},
+						false
+					);
+			}
+			
 			function categoryid_onchange() {
 				$.ajax({
 						url: "createcertificatecombo.php",
@@ -39,7 +71,7 @@
 	$crud = new CertificateCrud();
 	$crud->title = "Certificates";
 	$crud->table = "{$_SESSION['DB_PREFIX']}usercertificate";
-	$crud->dialogwidth = 500;
+	$crud->dialogwidth = 800;
 	$crud->sql = 
 			"SELECT 
 			 A.*, 
@@ -93,7 +125,8 @@
 			array(
 				'name'       => 'certificateid',
 				'type'       => 'DATACOMBO',
-				'length' 	 => 30,
+				'length' 	 => 70,
+				'onchange'	 => 'certificateid_onchange',
 				'label' 	 => 'Certificate',
 				'table'		 => 'certificate',
 				'table_id'	 => 'id',
@@ -112,7 +145,38 @@
 				'align'		 => 'right',
 				'datatype'	 => 'integer',
 				'label' 	 => 'Valid (years)'
-			)
+			),
+			array(
+				'name'       => 'sponsor',
+				'length' 	 => 12,
+				'label' 	 => 'Sponsor',
+				'type'       => 'COMBO',
+				'options'    => array(
+						array(
+							'value'		=> 'A',
+							'text'		=> 'Aspire'
+						),
+						array(
+							'value'		=> 'B',
+							'text'		=> 'BT'
+						),
+						array(
+							'value'		=> 'H',
+							'text'		=> 'HMRC'
+						),
+						array(
+							'value'		=> 'O',
+							'text'		=> 'Other'
+						)
+					)
+			),
+			array(
+				'name'       => 'notes',
+				'showInView' => false,
+				'length' 	 => 15,
+				'type'	 	 => 'BASICTEXTAREA',
+				'label' 	 => 'Notes'
+			),
 		);
 		
 	$crud->subapplications = array(

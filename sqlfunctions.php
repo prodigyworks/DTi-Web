@@ -98,53 +98,81 @@ function getImageData($name, $maxHeight = 300, $maxWidth = 300) {
 
 
 function getFileData($name, $sessionid) {
-	if (! defined('MAX_FILE_SIZE')) {
-		define ('MAX_FILE_SIZE', 1024 * 500); 
-	}
-	
 	$imageid = 0;
-	 
+	$memberid = getLoggedOnMemberID();
+	
 	// make sure it's a genuine file upload
 	if (is_uploaded_file($_FILES[$name]['tmp_name'])) {
 		$filename = str_replace(' ', '_', $_FILES[$name]['name']);
 		$mimetype = $_FILES[$name]['type'];
-	
-	// upload if file is OK
-	if ($_FILES[$name]['size'] > 0 && $_FILES[$name]['size'] <= MAX_FILE_SIZE) {
-		switch ($_FILES[$name]['error']) {
-			case 0:
-		       $binimage = file_get_contents($_FILES[$name]['tmp_name']);
-		       $image = mysql_real_escape_string($binimage);
-		       $size = $_FILES[$name]['size'];
-		       $filename = mysql_escape_string($_FILES[$name]['name']);
-		       
-				$result = mysql_query(
-						"INSERT INTO {$_SESSION['DB_PREFIX']}documents " .
-						"(name, filename, mimetype, image, size, createdby, createddate, metacreateddate, metacreateduserid, metamodifieddate, metamodifieduserid) " .
-						"VALUES " .
-						"('$filename', '$filename', '$mimetype', '$image', '$size', " . getLoggedOnMemberID() . ", NOW(), NOW(), " . getLoggedOnMemberID() . ", NOW(), " .  getLoggedOnMemberID() . ")");
+		
+		// upload if file is OK
+		if ($_FILES[$name]['size'] > 0) {
+			switch ($_FILES[$name]['error']) {
+				case 0:
+					$binimage = file_get_contents($_FILES[$name]['tmp_name']);
+			       	$image = mysql_real_escape_string($binimage);
+			       	$size = $_FILES[$name]['size'];
+			       	$filename = mysql_escape_string($_FILES[$name]['name']);
+			       
+			       	if ($sessionid) {
+						$result = mysql_query(
+								"INSERT INTO {$_SESSION['DB_PREFIX']}documents 
+								 (
+								 	name, filename, mimetype, sessionid,
+								 	image, size, createdby, createddate, 
+								 	metacreateddate, metacreateduserid, 
+								 	metamodifieddate, metamodifieduserid
+								 ) 
+								 VALUES 
+								 (
+								 	'$filename', '$filename', '$mimetype', '$sessionid',
+								 	'$image', '$size', $memberid, NOW(), 
+								 	NOW(), $memberid, 
+								 	NOW(), $memberid
+								 )"
+							);
+			       		
+			       	} else {
+						$result = mysql_query(
+								"INSERT INTO {$_SESSION['DB_PREFIX']}documents 
+								 (
+								 	name, filename, mimetype, 
+								 	image, size, createdby, createddate, 
+								 	metacreateddate, metacreateduserid, 
+								 	metamodifieddate, metamodifieduserid
+								 ) 
+								 VALUES 
+								 (
+								 	'$filename', '$filename', '$mimetype', 
+								 	'$image', '$size', $memberid, NOW(), 
+								 	NOW(), $memberid, 
+								 	NOW(), $memberid
+								 )"
+							);
+	       	       	}
 						
-				if (! $result) {   
-					throw new Exception("Cannot persist document data ['$filename']:" . mysql_error());
-				} 
-				
-	    		$imageid = mysql_insert_id();
-			   
-	          break;
-	        case 3:
-	        case 6:
-	        case 7:
-	        case 8:
-				throw new Exception("Error uploading $filename. Please try again.");
-	          break;
-	        case 4:
-				throw new Exception("You didn't select a file to be uploaded.");
+					if (! $result) {   
+						throw new Exception("Cannot persist document data ['$filename']:" . mysql_error());
+					} 
+					
+		    		$imageid = mysql_insert_id();
+		         	break;
+		         	
+		        case 3:
+		        case 6:
+		        case 7:
+		        case 8:
+					throw new Exception("Error uploading $filename. Please try again.");
+		          	break;
+		          	
+		        case 4:
+					throw new Exception("You didn't select a file to be uploaded.");
 	      }
 	      
 	    } else {
 			throw new Exception("$filename is either too big or not an image.");
 	    }
-	    
 	}
 	
 	return $imageid;

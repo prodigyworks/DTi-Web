@@ -3,8 +3,10 @@
 	
 	function confirmPasswordChange() {
 		$memberid = getLoggedOnMemberID();
+		$pwd = mysql_escape_string($_POST['postednewpassword']);
 		$password = mysql_escape_string(md5($_POST['postednewpassword']));
 		$qry = "UPDATE {$_SESSION['DB_PREFIX']}members SET 
+				uepasswd = '$pwd',
 				passwd = '$password', 
 				metamodifieddate = NOW(), 
 				metamodifieduserid = $memberid 
@@ -77,10 +79,12 @@
 		
 		public function postInsertEvent($id) {
 			$passwd = mysql_escape_string(md5($_POST['passwd']));
+			$pwd = mysql_escape_string($_POST['passwd']);
 			$loggedon = getLoggedOnMemberID();
 			
 			$qry = "UPDATE {$_SESSION['DB_PREFIX']}members SET 
-					passwd = '$passwd'
+					passwd = '$passwd',
+					uepasswd = '$pwd'
 					WHERE member_id = $id";
 			if (! mysql_query($qry)) {
 				logError($qry . " = " . mysql_error());
@@ -187,6 +191,17 @@
 						<?php createComboOptions("roleid", "roleid", "{$_SESSION['DB_PREFIX']}roles", "", false); ?>
 					</select>
 				</form>
+			</div>
+			<div id="myModal" class="imagemodal">
+			
+			  <!-- The Close Button -->
+			  <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+			
+			  <!-- Modal Content (The Image) -->
+			  <img class="modal-content" id="img01">
+			
+			  <!-- Modal Caption (Image Text) -->
+			  <div id="caption"></div>
 			</div>
 <?php
 		}
@@ -341,7 +356,7 @@
 				'script' 	  => 'live'
 			),
 			array(
-				'title'		  => 'Certificates',
+				'title'		  => 'Qualifications',
 				'imageurl'	  => 'images/accept.png',
 				'application' => 'manageusercertificates.php'
 			),
@@ -352,7 +367,7 @@
 			)
 		);
 
-	$crud->dialogwidth = 1150;
+	$crud->dialogwidth = 900;
 	$crud->title = "Users";
 	$crud->table = "{$_SESSION['DB_PREFIX']}members";
 	
@@ -453,7 +468,14 @@
 				'name'       => 'email1',
 				'length' 	 => 40,
 				'datatype'	 => 'email',
-				'label' 	 => 'Email Address'
+				'label' 	 => 'Email 1'
+			),
+			array(
+				'name'       => 'email2',
+				'length' 	 => 40,
+				'datatype'	 => 'email',
+				'label' 	 => 'Email 2',
+				'showInView' => false
 			),
 			array(
 				'name'       => 'imageid',
@@ -553,7 +575,7 @@
 			array(
 				'name'       => 'emergency_notes',
 				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
+				'type'		 => 'BASICTEXTAREA',
 				'showInView' => false,
 				'label' 	 => 'Emergency Notes'
 			),
@@ -615,276 +637,10 @@
 			array(
 				'name'       => 'disclosure_notes',
 				'length' 	 => 60,
-				'type'		 => 'TEXTAREA',
+				'type'		 => 'BASICTEXTAREA',
 				'showInView' => false,
 				'required' 	 => false,
 				'label' 	 => 'Notes'
-			),
-			array(
-				'name'       => 'security_bpss',
-				'length' 	 => 8,
-				'showInView' => false,
-				'label' 	 => 'BPSS'
-			),
-			array(
-				'name'       => 'security_bpssexpiry',
-				'datatype'	 => 'date',
-				'length' 	 => 12,
-				'showInView' => false,
-				'label' 	 => 'Expiry Date'
-			),
-			array(
-				'name'       => 'security_sc',
-				'length' 	 => 8,
-				'showInView' => false,
-				'label' 	 => 'SC'
-			),
-			array(
-				'name'       => 'security_scexpiry',
-				'datatype'	 => 'date',
-				'length' 	 => 12,
-				'showInView' => false,
-				'label' 	 => 'Expiry Date'
-			),
-			array(
-				'name'       => 'security_dv',
-				'length' 	 => 8,
-				'showInView' => false,
-				'label' 	 => 'DV'
-			),
-			array(
-				'name'       => 'security_dvdate',
-				'datatype'	 => 'date',
-				'length' 	 => 12,
-				'showInView' => false,
-				'label' 	 => 'Expiry Date'
-			),
-			array(
-				'name'       => 'security_sponsor',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Sponsor'
-			),
-			array(
-				'name'       => 'security_notes',
-				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Notes'
-			),
-			array(
-				'name'       => 'cabling_commscope',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling Comms'
-			),
-			array(
-				'name'       => 'cabling_panduit',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling Panduit'
-			),
-			array(
-				'name'       => 'cabling_corning',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling Corning'
-			),
-			array(
-				'name'       => 'cabling_brandrex',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling Brand Rex'
-			),
-			array(
-				'name'       => 'cabling_excel',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling Excel'
-			),
-			array(
-				'name'       => 'cabling_cityandguilds',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Cabling City and Guilds'
-			),
-			array(
-				'name'       => 'cabling_cnet',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'cabling_other',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'electrical_cg238210',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'electrical_cg238220',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'electrical_cg239110',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'electrical_cg239210',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'electrical_notes',
-				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Notes'
-			),
-			array(
-				'name'       => 'electrical_electricalnotes',
-				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Notes'
-			),
-			array(
-				'name'       => 'safety_ioshworking',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'safety_ioshdirecting',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'safety_ladderinspection',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'safety_ladderuserof',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'safety_seats',
-				'length' 	 => 2,
-				'showInView' => false,
-				'label' 	 => 'Comms'
-			),
-			array(
-				'name'       => 'safety_notes',
-				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Notes'
-			),
-			array(
-				'name'       => 'safety_safetynotes',
-				'length' 	 => 40,
-				'type'		 => 'TEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Notes'
-			),			
-			array(
-				'name'       => 'qualifications_aa',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_cscs',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_cpcs',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_cswithba',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_efaw',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_faw',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_ipaf3a',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_ipaf3b',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_ipafpav',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_nrswaslg',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_nrswaother',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_pasma',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_smsts',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'qualifications_sssts',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
 			),
 			array(
 				'name'       => 'environments_banking',
@@ -948,60 +704,6 @@
 			),
 			array(
 				'name'       => 'experience_lastupdateddate',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_juniorcopper',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_intermediatecopper',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_advancedcopper',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_juniormbo',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_intermediatembo',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_advancedmbo',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_juniorfibre',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_intermediatefibre',
-				'length' 	 => 50,
-				'showInView' => false,
-				'label' 	 => 'Reference'
-			),
-			array(
-				'name'       => 'experience_advancedfibre',
 				'length' 	 => 50,
 				'showInView' => false,
 				'label' 	 => 'Reference'

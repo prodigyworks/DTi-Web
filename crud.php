@@ -356,8 +356,10 @@ class Crud  {
 		<script src='js/jquery.ui.timepicker.js'></script>
 		<script src="js/jquery.multiselect.filter.min.js" type="text/javascript"></script>
 		<script src="js/jquery.multiselect.min.js" type="text/javascript"></script>
+		<script src="js/imageviewer.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="css/jquery.multiselect.css" />
 		<link rel="stylesheet" type="text/css" href="css/jquery.multiselect.filter.css" />
+		<link rel="stylesheet" type="text/css" href="css/imageviewer.css" />
 		
 		<?php
 		if ($this->geolocation) {
@@ -579,6 +581,7 @@ class Crud  {
 		} else if ($col['type'] == "IMAGE") {
 			echo "<img style='height:" . ($col['length']) . "px' id='" . $col['name'] . "_img' />\n<br>";
 			echo "<input " . ($col['required'] == true ? "required='true' " : "") . " " . ($col['readonly'] == true ? "readonly " : "") . " type='file' style='width:400px' id='" . $col['name'] . "' name='" . $col['name'] . "' />\n";
+			echo "attachImageView('" . $col['name'] . "_img');\n";
 
 		} else if ($col['type'] == "BASICTEXTAREA") {
 			echo "<textarea style='width:600px' rows=6 cols=80 " .($col['readonly'] == true ? "readonly " : "") . " id='" . $col['name'] . "' name='" . $col['name'] . "'></textarea>\n";
@@ -1768,6 +1771,13 @@ class Crud  {
 									if (isUserAccessPermitted('EditItem')) {
 							?> 
 										editSelectedRow();
+							<?php
+									}
+									
+								} else if ($this->allowView) {
+									if (isUserAccessPermitted('ViewItem')) {
+							?> 
+										viewSelectedRow();
 							<?php
 									}
 								}

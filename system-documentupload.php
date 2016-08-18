@@ -3,7 +3,7 @@
 	require_once('sqlfunctions.php');
 	
 	start_db();
-    $imageid = getFileData("document");
+    $imageid = getFileData("document", session_id());
     
     if (isset($_GET['documentcallback'])) {
 	  	header("location: " . $_GET['documentcallback'] . "?id=" . $_GET['identifier'] . "&refer=" . base64_encode($_SERVER['HTTP_REFERER']));

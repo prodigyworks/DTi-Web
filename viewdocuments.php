@@ -9,7 +9,11 @@
 	     logError("Please select your image!");
 	     
 	} else {
-		$query = mysql_query("SELECT mimetype, image, size FROM {$_SESSION['DB_PREFIX']}documents WHERE id= ". $id);
+		$query = mysql_query(
+				"SELECT mimetype, image, size 
+				FROM {$_SESSION['DB_PREFIX']}documents 
+				WHERE id = $id"
+			);
 		$row = mysql_fetch_array($query);
 		$content = $row['image'];
 		

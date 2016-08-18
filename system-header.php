@@ -103,7 +103,7 @@
 										?>
 									</a>
 									<span>
-									&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;<a title='Log out' href='system-logout.php'><img class='profileimage' src='images/logout.png' border=0 /></a>
+									&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;<a title='Log out' href='system-logout.php'><img src='images/logout.png' border=0 /></a>
 									</span> 
 									</label>
 								</div>

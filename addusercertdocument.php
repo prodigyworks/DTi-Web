@@ -11,7 +11,7 @@
 		    WHERE A.sessionid = '$sessionid' 
 		    AND A.id NOT IN (
 		    	SELECT documentid 
-		    	FROM {$_SESSION['DB_PREFIX']}bookingdocs 
+		    	FROM {$_SESSION['DB_PREFIX']}usercertificatedocs 
 		    	WHERE documentid = A.id
 		    ) 
 		    ORDER BY A.id";
@@ -23,15 +23,15 @@
 	
 	while (($member = mysql_fetch_assoc($result))) {
 		$documentid = $member['id'];
-		$qry = "INSERT INTO {$_SESSION['DB_PREFIX']}bookingdocs 
+		$qry = "INSERT INTO {$_SESSION['DB_PREFIX']}usercertificatedocs 
 				(
-					bookingid, documentid, createddate, 
+					usercertificateid, documentid, createddate, 
 					metacreateddate, metacreateduserid, 
 					metamodifieddate, metamodifieduserid
 				) 
 				VALUES 
 				(
-					$bookingid, $documentid, NOW(), 
+					$usercertificateid, $documentid, NOW(), 
 					NOW(), $memberid, 
 					NOW(), $memberid
 				)";

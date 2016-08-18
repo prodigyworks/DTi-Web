@@ -17,7 +17,7 @@
 			$where = "";
 			
 		} else {
-			$where = " WHERE MATCH(name, filename) AGAINST ('" . $_POST['pk1'] . "'  IN BOOLEAN MODE) ";
+			$where = " WHERE MATCH(name, filename) AGAINST ('{$_POST['pk1']}'  IN BOOLEAN MODE) ";
 		}
 	}
 	
@@ -28,7 +28,6 @@
 			$result = mysql_query($qry);
 		}
 	}
-	
 	
 	createConfirmDialog("confirmdialog", "Delete document ?", "deleteDocumentFromDialog");
 	
@@ -109,7 +108,7 @@
 ?>
 				<td>Name</td>
 				<td>File Name</td>
-				<td>Size</td>
+				<td align='right'>Size</td>
 				<td>Created</td>
 				<td>Created By</td>
 			</tr>
@@ -172,7 +171,7 @@
 					}
 					
 					echo "<td>" . $member['filename'] . "</td>\n";
-					echo "<td>" . $member['size'] . "</td>\n";
+					echo "<td align='right'>" . $member['size'] . "</td>\n";
 					echo "<td>" . $member['createddate'] . "</td>\n";
 					echo "<td>" . $member['firstname'] . " " . $member['lastname'] . "</td>\n";
 					echo "</tr>\n";
