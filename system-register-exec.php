@@ -207,6 +207,7 @@
 		
 		$_SESSION['SESS_FIRST_NAME'] = $fname;
 		$_SESSION['SESS_LAST_NAME'] = $lname;
+		$_SESSION['SESS_IMAGE_ID'] = $imageid;
 		
 		sendRoleMessage("ADMIN", "User Amendment", "<h3>User amendment.</h3><br>Your details have been amended by the System Administration.<br>Your password has been changed to: <i>$password</i>.");
 		sendUserMessage($memberid, "User Amendment", "<h3>User amendment.</h3><br>Your details have been amended by the System Administration.<br>Your password has been changed to: <i>$password</i>.");

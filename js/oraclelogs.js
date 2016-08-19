@@ -159,6 +159,23 @@ function envelopeCode(node) {
 
 $(document).ready(function() {
 	
+		$(".profileimageselector").hover(
+				function() {
+					$("#profileimageselectormenu").css("margin-top", "-35px");
+					$("#profileimageselectormenu").show();
+				},
+				function() {
+				}
+			);
+	
+		$("#profileimageselectormenu").hover(
+				function() {
+				},
+				function() {
+					$("#profileimageselectormenu").hide();
+				}
+			);
+		
 		envelopeCode(".codepreview pre");
 		
 		$( ".tabs" ).tabs({

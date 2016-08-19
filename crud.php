@@ -1871,9 +1871,15 @@ class Crud  {
 									$(this).dialog("close")
 									
 									post("editform", $("#editform #crudcmd").val(), "submitframe");
+
+									setTimeout(
+											function() {
 <?php									
 									$this->postUpdateScriptEvent();
 ?>									
+											},
+											1000
+										);
 								},
 								Cancel: function() {
 									$(this).dialog("close");

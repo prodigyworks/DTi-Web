@@ -8,6 +8,14 @@
 			createDocumentLink();
 		}
 		
+		public function postEditScriptEvent() {
+?>
+			$("#categoryid").trigger("change");
+			$("#certificateid").val(node.certificateid);
+			$("#certificateid").trigger("change");
+<?php			
+		}
+		
 		/* Post script event. */
 		public function postScriptEvent() {
 ?>
@@ -21,7 +29,7 @@
 						{ 
 							sql: "SELECT expires, cardnumberrequired " +
 								 "FROM <?php echo $_SESSION['DB_PREFIX'];?>certificate " + 
-								 "WHERE id = " + $(this).val()
+								 "WHERE id = " + $("#certificateid").val()
 						},
 						function(data) {
 							var node = data[0];

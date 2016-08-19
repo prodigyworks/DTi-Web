@@ -56,6 +56,30 @@
 			include("usersfilterform.php");
 		}
 		
+		public function postUpdateScriptEvent() {
+?>
+			callAjax(
+					"finddata.php", 
+					{ 
+						sql: "SELECT imageid " +
+							 "FROM <?php echo $_SESSION['DB_PREFIX'];?>members " + 
+							 "WHERE member_id = <?php echo getLoggedOnMemberID(); ?>"
+					},
+					function(data) {
+						var node = data[0];
+						
+						if (node.imageid == 0) {
+							$("#profileimage_img").attr("src", "images/noprofile.png");
+			
+						} else {
+							$("#profileimage_img").attr("src", "system-imageviewer.php?id=" + node.imageid);
+						}
+					},
+					false
+				);
+<?php
+		}
+		
 		public function postAddScriptEvent() {
 ?>
 			$(".addonly").show();
@@ -64,7 +88,7 @@
 			$(".addonly input").attr("required", true);
 			$(".tabs").tabs('select', 0);
 			$("#disclosure_scotland").trigger("change");
-<?php			
+<?php
 		}
 		
 		public function postEditScriptEvent() {
@@ -75,6 +99,10 @@
 			$(".tabs").tabs('select', 0);
 			$("#disclosure_scotland").trigger("change");
 <?php			
+		}
+		
+		public function postUpdateEvent($id) {
+			$this->updateProfileImage($id);
 		}
 		
 		public function postInsertEvent($id) {
@@ -117,7 +145,28 @@
 						NOW(), $loggedon
 					)";
 			$result = mysql_query($qry);
-	}
+			
+			$this->updateProfileImage($id);			
+		}
+		
+		private function updateProfileImage($id) {
+			if ($id == getLoggedOnMemberID()) {
+				$qry = "SELECT firstname, lastname, imageid
+						FROM {$_SESSION['DB_PREFIX']}members
+						WHERE member_id = $id";
+				
+				$result = mysql_query($qry);
+				
+				//Check whether the query was successful or not
+				if ($result) {
+					while (($member = mysql_fetch_assoc($result))) {
+						$_SESSION['SESS_FIRST_NAME'] = $member['firstname'];
+						$_SESSION['SESS_LAST_NAME'] = $member['lastname'];
+						$_SESSION['SESS_IMAGE_ID'] = $member['imageid'];
+					}
+				}
+			}
+		}
 		
 		/* Pre command event. */
 		public function preCommandEvent() {

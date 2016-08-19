@@ -85,27 +85,24 @@
 									$result = mysql_query($qry);
 								?>
 								<div id="toppanel">
-									<label>
+									<div class="profileimage">
 									<?php 
 										if (getLoggedOnImageID() != 0) {
 ?>	  
-											<img class='profileimage' src='system-imageviewer.php?id=<?php echo getLoggedOnImageID(); ?>' height=30  />
+											<img id="profileimage_img" src='system-imageviewer.php?id=<?php echo getLoggedOnImageID(); ?>' />
+<?php 
+										} else {
+?>	  
+											<img id="profileimage_img" src='images/noprofile.png'  />
 <?php 
 										}
 ?>									
-									<a href='profile.php'>
-										<?php 
-											echo GetUserName(); 
-											
-											if (isUserInRole("TEAM")) {
-												echo "&nbsp;&nbsp;( " . $_SESSION['SESS_TEAM_NAME'] . " )"; 
-											}
-										?>
-									</a>
-									<span>
-									&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;<a title='Log out' href='system-logout.php'><img src='images/logout.png' border=0 /></a>
-									</span> 
-									</label>
+										<img class='profileimageselector' src='images/minimize.gif' />
+										<ul id="profileimageselectormenu" class="submenu">
+											<li onclick='navigate("profile.php");'>Edit Profile</a></li>
+											<li onclick='navigate("system-logout.php");'>Log Out</a></li>
+										</ul>
+									</div>
 								</div>
 							</div>
 						<?php		
