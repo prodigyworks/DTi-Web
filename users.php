@@ -80,6 +80,18 @@
 <?php
 		}
 		
+		public function preViewScriptEvent() {
+?>
+			$(".tabs").tabs('select', 0);
+<?php
+		}
+		
+		public function preFilterScriptEvent() {
+?>
+			$(".tabs").tabs('select', 0);
+<?php
+		}
+		
 		public function postAddScriptEvent() {
 ?>
 			$(".addonly").show();
@@ -88,6 +100,8 @@
 			$(".addonly input").attr("required", true);
 			$(".tabs").tabs('select', 0);
 			$("#disclosure_scotland").trigger("change");
+			$("#ukdrivinglicence").trigger("change");
+			$("#passport").trigger("change");
 <?php
 		}
 		
@@ -98,6 +112,8 @@
 			$(".addonly").hide();
 			$(".tabs").tabs('select', 0);
 			$("#disclosure_scotland").trigger("change");
+			$("#ukdrivinglicence").trigger("change");
+			$("#passport").trigger("change");
 <?php			
 		}
 		
@@ -295,8 +311,54 @@
 				}
 			}
 			
+			function ukdrivinglicence_onchange() {
+				if ($("#ukdrivinglicence").val() == "Y") {
+					$(".ukdrivinglicence_div").show();
+					
+					$("#ukdrivinglicence_expires").attr("disabled", false);
+					$("#ukdrivinglicence_imageid").attr("disabled", false);
+
+					$("#ukdrivinglicence_expires").attr("required", true);
+				
+				} else {
+					$(".ukdrivinglicence_div").hide();
+					
+					$("#ukdrivinglicence_expires").val("");
+					$("#ukdrivinglicence_imageid").val("");
+
+					$("#ukdrivinglicence_expires").attr("required", false);
+				}
+			}
+			
+			function passport_onchange() {
+				if ($("#passport").val() == "Y") {
+					$(".passport_div").show();
+					
+					$("#passport_expires").attr("disabled", false);
+					$("#passport_imageid").attr("disabled", false);
+
+					$("#passport_expires").attr("required", true);
+				
+				} else {
+					$(".passport_div").hide();
+					
+					$("#passport_expires").val("");
+					$("#passport_imageid").val("");
+
+					$("#passport_expires").attr("required", false);
+				}
+			}
+			
 			$(document).ready(function() {
+					$("#experience_years").change(
+							function() {
+								$("#experience_lastupdateddate").val("<?php echo date("d/m/Y"); ?>");
+							}
+						);
+						
 					$("#disclosure_scotland").change(disclosure_scotland_onchange);
+					$("#ukdrivinglicence").change(ukdrivinglicence_onchange);
+					$("#passport").change(passport_onchange);
 					$("#firstname, #lastname").change(
 							function() {
 								$("#fullname").val($("#firstname").val() + " " + $("#lastname").val());
@@ -420,12 +482,37 @@
 	$crud->title = "Users";
 	$crud->table = "{$_SESSION['DB_PREFIX']}members";
 	
-	$crud->sql = 
-			"SELECT A.*, B.name
-			 FROM {$_SESSION['DB_PREFIX']}members A 
-			 LEFT OUTER JOIN {$_SESSION['DB_PREFIX']}customer B
-			 ON B.id = A.companyid 
-			 ORDER BY A.firstname, A.lastname"; 
+	if (isUserInRole("ADMIN")) {
+		$crud->sql = 
+				"SELECT A.*, B.name
+				 FROM {$_SESSION['DB_PREFIX']}members A 
+				 LEFT OUTER JOIN {$_SESSION['DB_PREFIX']}customer B
+				 ON B.id = A.companyid 
+				 ORDER BY A.firstname, A.lastname"; 
+		
+	} else if (isUserInRole("TEAMLEADER")) {
+		$memberid = getLoggedOnMemberID();
+		$crud->sql = 
+				"SELECT A.*, B.name
+				 FROM {$_SESSION['DB_PREFIX']}members A 
+				 LEFT OUTER JOIN {$_SESSION['DB_PREFIX']}customer B
+				 ON B.id = A.companyid 
+				 INNER JOIN {$_SESSION['DB_PREFIX']}team C
+				 ON C.id = $memberid
+				 INNER JOIN {$_SESSION['DB_PREFIX']}teamusers D
+				 ON D.teamid = C.id
+				 ORDER BY A.firstname, A.lastname"; 
+		
+	} else {
+		$singleuserid = getLoggedOnMemberID();
+		$crud->sql = 
+				"SELECT A.*, B.name
+				 FROM {$_SESSION['DB_PREFIX']}members A 
+				 LEFT OUTER JOIN {$_SESSION['DB_PREFIX']}customer B
+				 ON B.id = A.companyid 
+				 WHERE A.member_id = $singleuserid
+				 ORDER BY A.firstname, A.lastname"; 
+	}
 			
 	$crud->columns = array(
 			array(
@@ -501,17 +588,17 @@
 				'label' 	 => 'Post Code'
 			),
 			array(
+				'name'       => 'landline1',
+				'length' 	 => 18,
+				'datatype'	 => 'tel',
+				'label' 	 => 'Contact Number 1'
+			),
+			array(
 				'name'       => 'mobile1',
 				'length' 	 => 15,
 				'datatype'	 => 'tel',
-				'label' 	 => 'Mobile Number'
-			),
-			array(
-				'name'       => 'landline1',
-				'length' 	 => 13,
-				'datatype'	 => 'tel',
 				'showInView' => false,
-				'label' 	 => 'Land Line 1'
+				'label' 	 => 'Contact Number 2'
 			),
 			array(
 				'name'       => 'email1',
@@ -534,8 +621,41 @@
 				'showInView' => false
 			),
 			array(
+				'name'       => 'passport',
+				'length' 	 => 12,
+				'onchange'	 => 'passport_onchange',
+				'label' 	 => 'Passport',
+				'type'       => 'COMBO',
+				'showInView' => false,
+				'options'    => array(
+						array(
+							'value'		=> 'Y',
+							'text'		=> 'Yes'
+						),
+						array(
+							'value'		=> 'N',
+							'text'		=> 'No'
+						)
+					)
+			),
+			array(
+				'name'       => 'passport_expires',
+				'length' 	 => 30,
+				'datatype'	 => 'date',
+				'label' 	 => 'Expires',
+				'showInView' => false
+			),
+			array(
+				'name'       => 'passport_imageid',
+				'type'       => 'IMAGE',
+				'length' 	 => 30,
+				'label' 	 => 'Image',
+				'showInView' => false
+			),
+			array(
 				'name'       => 'ukdrivinglicence',
 				'length' 	 => 12,
+				'onchange'	 => 'ukdrivinglicence_onchange',
 				'label' 	 => 'UK Driving Licence',
 				'type'       => 'COMBO',
 				'showInView' => false,
@@ -549,6 +669,20 @@
 							'text'		=> 'No'
 						)
 					)
+			),
+			array(
+				'name'       => 'ukdrivinglicence_expires',
+				'length' 	 => 30,
+				'datatype'	 => 'date',
+				'label' 	 => 'Expires',
+				'showInView' => false
+			),
+			array(
+				'name'       => 'ukdrivinglicence_imageid',
+				'type'       => 'IMAGE',
+				'length' 	 => 30,
+				'label' 	 => 'Image',
+				'showInView' => false
 			),
 			array(
 				'name'       => 'employmentstatus',
@@ -622,13 +756,6 @@
 				'label' 	 => 'Emergency Relationship'
 			),
 			array(
-				'name'       => 'emergency_notes',
-				'length' 	 => 40,
-				'type'		 => 'BASICTEXTAREA',
-				'showInView' => false,
-				'label' 	 => 'Emergency Notes'
-			),
-			array(
 				'name'       => 'disclosure_scotland',
 				'length' 	 => 12,
 				'label' 	 => 'Disclosure Scotland',
@@ -682,6 +809,13 @@
 				'showInView' => false,
 				'required' 	 => false,
 				'label' 	 => 'Reference Number'
+			),
+			array(
+				'name'       => 'emergency_notes',
+				'length' 	 => 40,
+				'type'		 => 'BASICTEXTAREA',
+				'showInView' => false,
+				'label' 	 => 'Emergency Notes'
 			),
 			array(
 				'name'       => 'disclosure_notes',
@@ -744,6 +878,13 @@
 				'length' 	 => 50,
 				'showInView' => false,
 				'label' 	 => 'Reference'
+			),
+			array(
+				'name'       => 'environments_notes',
+				'length' 	 => 50,
+				'type'		 => 'BASICTEXTAREA',
+				'showInView' => false,
+				'label' 	 => 'Notes'
 			),
 			array(
 				'name'       => 'experience_years',

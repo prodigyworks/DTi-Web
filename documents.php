@@ -106,11 +106,11 @@
 <?php
 	}
 ?>
-				<td>Name</td>
-				<td>File Name</td>
-				<td align='right'>Size</td>
-				<td>Created</td>
-				<td>Created By</td>
+				<td width='30%'>Name</td>
+				<td width='40%'>File Name</td>
+				<td width='8%' align='right'>Size</td>
+				<td width='7%'>Created</td>
+				<td width='15%'>Created By</td>
 			</tr>
 		</thead>
 		<?php
@@ -171,7 +171,23 @@
 					}
 					
 					echo "<td>" . $member['filename'] . "</td>\n";
-					echo "<td align='right'>" . $member['size'] . "</td>\n";
+					
+					$size = $member['size'];
+					
+					if ($size > 1073741824) {
+						$size = floor($size / 1073741824) . " gb";
+						
+					} else if ($size > 1048576) {
+						$size = floor($size / 1048576) . " mb";
+						
+					} else if ($size > 1024) {
+						$size = floor($size / 1024) . " kb";
+						
+					} else {
+						$size .= " bytes";
+					}
+					
+					echo "<td align='right'>" . $size . "</td>\n";
 					echo "<td>" . $member['createddate'] . "</td>\n";
 					echo "<td>" . $member['firstname'] . " " . $member['lastname'] . "</td>\n";
 					echo "</tr>\n";
@@ -227,6 +243,14 @@
 				);
 			
 			$("#confirmdialog .confirmdialogbody").html("You are about to remove this document.<br>Are you sure ?");
+<?php 
+			if (isset($_SESSION['ERRMSG_ARR'])) {
+?>
+				pwAlert("<?php echo escape_notes($_SESSION['ERRMSG_ARR']); ?>");
+<?php
+				unset($_SESSION['ERRMSG_ARR']);
+			}
+?>
 		});
 </script>
 <?php

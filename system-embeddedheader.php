@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<link href="css/style-17082016.css" rel="stylesheet" type="text/css" />
+<link href="css/style-24082016.css" rel="stylesheet" type="text/css" />
 <!-- 
 <link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
  -->
@@ -19,7 +19,7 @@
 <script src="js/jquery-ui.min.js" type="text/javascript"></script>
 <script src='js/jquery.hoverIntent.minified.js' type='text/javascript'></script>
 <script src='js/jquery.dcmegamenu.1.3.3.js' type='text/javascript'></script>
-<script src="js/oraclelogs.js" language="javascript" ></script>
+<script src="js/prodigyworks-24082016.js" language="javascript" ></script>
 <title>FA</title>
 <script>
 	var autoLoad = false;

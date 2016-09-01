@@ -399,7 +399,7 @@
 			$('#documentDialog').dialog({
 					autoOpen: false,
 					modal: true,
-					width: 750,
+					width: 1050,
 					height: 600,
 					title: 'Documents',
 					show:'fade',

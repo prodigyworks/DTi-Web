@@ -1,11 +1,7 @@
 <?php
 include ("SimpleImage.php");
 
-function getImageData($name, $maxHeight = 300, $maxWidth = 300) {
-	if (! defined('MAX_FILE_SIZE')) {
-		define ('MAX_FILE_SIZE', 1024 * 500); 
-	}
-	
+function getImageData($name, $maxHeight = 1000, $maxWidth = 1000) {
 	$imageid = 0;
 	 
 	// make sure it's a genuine file upload
@@ -28,16 +24,6 @@ function getImageData($name, $maxHeight = 300, $maxWidth = 300) {
 	 	
 	   switch ($_FILES[$name]['error']) {
 	     case 0:
-	       // get the file contents
-
-	      // Temporary file name stored on the server
-//		      $tmpName  = $_FILES[$name]['tmp_name'];  
-//		       
-//		      // Read the file 
-//		      $fp = fopen($tmpName, 'r');
-//		      $image = fread($fp, filesize($tmpName));
-//		      fclose($fp);
-	       
 	       // get the width and height
 	       $size = getimagesize($_FILES[$name]['tmp_name']);
 	       $width = $size[0];
@@ -153,6 +139,7 @@ function getFileData($name, $sessionid) {
 	       	       	}
 						
 					if (! $result) {   
+					    logError("Cannot persist document data ['$filename']:" . mysql_error(), false);
 						throw new Exception("Cannot persist document data ['$filename']:" . mysql_error());
 					} 
 					
@@ -163,15 +150,18 @@ function getFileData($name, $sessionid) {
 		        case 6:
 		        case 7:
 		        case 8:
+		        	logError("Error uploading $filename. Please try again.", false);
 					throw new Exception("Error uploading $filename. Please try again.");
 		          	break;
 		          	
 		        case 4:
-					throw new Exception("You didn't select a file to be uploaded.");
+		        	logError("You didn't select a file to be uploaded.", false);
+		        	throw new Exception("You didn't select a file to be uploaded.");
 	      }
 	      
 	    } else {
-			throw new Exception("$filename is either too big or not an image.");
+		    logError("$filename is either too big or not an image.", false);
+	    	throw new Exception("$filename is either too big or not an image.");
 	    }
 	}
 	

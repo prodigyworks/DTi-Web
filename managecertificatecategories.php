@@ -6,7 +6,7 @@
 	}
 
 	$crud = new CertificateTypeCrud();
-	$crud->title = "Certificate Categories";
+	$crud->title = "Qualification Categories";
 	$crud->table = "{$_SESSION['DB_PREFIX']}certificatecategory";
 	$crud->dialogwidth = 500;
 	$crud->sql = 
@@ -18,6 +18,7 @@
 			array(
 				'name'       => 'id',
 				'length' 	 => 6,
+				'filter'	 => false,
 				'pk'		 => true,
 				'showInView' => false,
 				'editable'	 => false,

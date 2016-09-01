@@ -6,6 +6,7 @@
 <div class="tabs">
   <ul>
     <li><a href="#tabs-1">Personal</a></li>
+    <li><a href="#tabs-4">Identification</a></li>
     <li><a href="#tabs-2">Emergency</a></li>
     <li><a href="#tabs-3">Disclosure Scotland</a></li>
     <li><a href="#tabs-10">Experience</a></li>
@@ -110,6 +111,54 @@
 				</td>
 			</tr>
 			<tr>
+				<td>Employment Status</td>
+				<td>
+					<SELECT required id='employmentstatus' name='employmentstatus'>
+						<OPTION value=''></OPTION>
+						<OPTION value='D'>Data Techniques Employee</OPTION>
+						<OPTION value='C'>Contractor</OPTION>
+					</SELECT>
+				</td>
+			</tr>
+		</table>
+  </div>
+  <div id="tabs-4">
+		<table width='100%' cellpadding=0 cellspacing=4 class="entryformclass">
+			<tr>
+				<td width='230px'>Passport</td>
+				<td>
+					<SELECT required id='passport' name='passport'>
+						<OPTION value=''></OPTION>
+						<OPTION value='Y'>Yes</OPTION>
+						<OPTION value='N'>No</OPTION>
+					</SELECT>
+				</td>
+			</tr>
+			<tr class="passport_div">
+				<td>Date of Expiry</td>
+				<td>
+					<input required type="text" class="datepicker" id="passport_expires" name="passport_expires" />
+				</td>
+			</tr>
+			<tr class="passport_div">
+				<td>Image</td>
+				<td>
+					<img style='padding:5px; border:1px solid black' id='passport_imageid_img' alt="Passport Image" class="imageviewer" height=60 />
+				</td>
+			</tr>
+			<tr class="passport_div">
+				<td>&nbsp;</td>
+				<td>
+					<b>NOTE: Passport image will not be refreshed until the record is saved.</b>
+				</td>
+			</tr>
+			<tr class="passport_div">
+				<td>&nbsp;</td>
+				<td>
+					<input type="file" id="passport_imageid" name="passport_imageid" style='width:200px' />
+				</td>
+			</tr>
+			<tr>
 				<td>UK Driving Licence</td>
 				<td>
 					<SELECT required id='ukdrivinglicence' name='ukdrivinglicence'>
@@ -119,14 +168,28 @@
 					</SELECT>
 				</td>
 			</tr>
-			<tr>
-				<td>Employment Status</td>
+			<tr class="ukdrivinglicence_div">
+				<td>Date of Expiry</td>
 				<td>
-					<SELECT required id='employmentstatus' name='employmentstatus'>
-						<OPTION value=''></OPTION>
-						<OPTION value='D'>Data Techniques Employee</OPTION>
-						<OPTION value='C'>Contractor</OPTION>
-					</SELECT>
+					<input required type="text" class="datepicker" id="ukdrivinglicence_expires" name="ukdrivinglicence_expires" />
+				</td>
+			</tr>
+			<tr class="ukdrivinglicence_div">
+				<td>Image</td>
+				<td>
+					<img style='padding:5px; border:1px solid black' id='ukdrivinglicence_imageid_img' alt="Driving Licence Image" class="imageviewer" height=60 />
+				</td>
+			</tr>
+			<tr class="ukdrivinglicence_div">
+				<td>&nbsp;</td>
+				<td>
+					<input type="file" id="ukdrivinglicence_imageid" name="ukdrivinglicence_imageid" style='width:200px' />
+				</td>
+			</tr>
+			<tr class="ukdrivinglicence_div">
+				<td>&nbsp;</td>
+				<td>
+					<b>NOTE: Driving licence image will not be refreshed until the record is saved.</b>
 				</td>
 			</tr>
 		</table>
@@ -195,15 +258,15 @@
 				</td>
 			</tr>
 			<tr class="disclosure_scotland_div">
-				<td>Obtained Date</td>
+				<td>Date of Issue</td>
 				<td>
-					<input class='datepicker' type='text' id='disclosure_obtaineddate' name='disclosure_obtaineddate' />
+					<input required class='datepicker' type='text' id='disclosure_obtaineddate' name='disclosure_obtaineddate' />
 				</td>
 			</tr>
 			<tr class="disclosure_scotland_div">
-				<td>Reference Number</td>
+				<td>Disclosure Number</td>
 				<td>
-					<input type='text' style='width: 360px' id='disclosure_refnumber' name='disclosure_refnumber' />
+					<input required type='text' style='width: 360px' id='disclosure_refnumber' name='disclosure_refnumber' />
 				</td>
 			</tr>
 			<tr class="disclosure_scotland_div">
@@ -322,9 +385,18 @@
 					</SELECT>
 				</td>
 			</tr>
+			<tr>
+				<td colspan=2>
+					<br>
+					<label>Example of work undertaken in these Environments</label>
+					<textarea cols=80 rows=7 id='environments_notes' name='environments_notes'></textarea>
+				</td>
+			</tr>
 		</table>
   </div>
 </div>
 <script>
 	attachImageView("imageid_img");
+	attachImageView("ukdrivinglicence_imageid_img");
+	attachImageView("passport_imageid_img");
 </script>

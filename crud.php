@@ -148,7 +148,13 @@ class Crud  {
 	public function postAddScriptEvent() {
 		/* Event for override. */
 	}
-		
+	
+	public function preViewScriptEvent() {
+	}
+	
+	public function preFilterScriptEvent() {
+	}
+	
 	public function preCommandEvent() {
 		/* Event for pre-command. */
 	}
@@ -725,7 +731,8 @@ class Crud  {
 			<input type="hidden" id="triggerrefresh" name="triggerrefresh" value="" />
 			<input type="hidden" id="crudcmd" name="crudcmd" value="" />
 			<input type="hidden" id="savefiltername" name="savefiltername" value="" />
-<?php 
+			<input type="hidden" id="currentfiltername" name="currentfiltername" value="" />
+		  <?php 
 			$this->filterScreenSetup();
 ?>
 		  </form>
@@ -952,7 +959,7 @@ class Crud  {
 					   	<ul class="submenu">
 						<?php	
 						}
-						echo "<li class='menuitem' onclick='selectFilter(" . $member['id'] . ")'>" . $member['description'] . "</li>";
+						echo "<li class='menuitem' onclick='selectFilter(" . $member['id'] . ")'>&nbsp;&nbsp;" . $member['description'] . "&nbsp;&nbsp;</li>";
 					}
 					
 					if (! $first) {
@@ -986,7 +993,7 @@ class Crud  {
 			if ($this->allowView) {
 				if (isUserAccessPermitted('ViewItem')) {
 		?> 
-	   	<span class="wrapper"><a disabled class='subapp rgap2 link2' href="javascript:viewSelectedRow()"><em><b><img src='images/view.png' /> View</b></em></a></span>
+	   	<span class="wrapper"><a disabled class='disabledbutton subapp rgap2 link2' href="javascript:viewSelectedRow()"><em><b><img src='images/view.png' /> View</b></em></a></span>
 		<?php
 				}
 			}
@@ -996,7 +1003,7 @@ class Crud  {
 			if ($this->allowEdit) {
 				if (isUserAccessPermitted('EditItem')) {
 		?> 
-	   	<span class="wrapper"><a disabled class='subapp rgap2 link2' href="javascript:editSelectedRow()"><em><b><img src='images/edit.png' /> Edit</b></em></a></span>
+	   	<span class="wrapper"><a disabled class='disabledbutton subapp rgap2 link2' href="javascript:editSelectedRow()"><em><b><img src='images/edit.png' /> Edit</b></em></a></span>
 		<?php
 				}
 			}
@@ -1006,7 +1013,7 @@ class Crud  {
 			if ($this->allowRemove) {
 				if (isUserAccessPermitted('RemoveItem')) {
 		?> 
-	   	<span class="wrapper"><a disabled class='subapp rgap2 link2' href="javascript:removeSelectedRow()"><em><b><img src='images/delete.png' /> Remove</b></em></a></span>
+	   	<span class="wrapper"><a disabled class='disabledbutton subapp rgap2 link2' href="javascript:removeSelectedRow()"><em><b><img src='images/delete.png' /> Remove</b></em></a></span>
 		<?php
 				}
 			}
@@ -1034,7 +1041,7 @@ class Crud  {
 					}
 ?>
 		</ul> 
-		<a disabled class='subapp rgap2 link2' href="javascript:void()"> 
+		<a disabled class='disabledbutton subapp rgap2 link2' href="javascript:void()"> 
 			<em> 
 				<b> 
 					<img width=16 height=16 src='<?php echo $app['imageurl']; ?>' /> <?php echo $app['title']; ?>
@@ -1047,7 +1054,7 @@ class Crud  {
 					if ($app ['application'] != "") {
 ?>
    	<span title="<?php echo $app['tooltip']; ?>" class="wrapper"> 
-   		<a disabled class='subapp rgap2 link2' id="<?php echo $app['id']; ?>" href="javascript: subApp('<?php echo $app['application']; ?>', getPK())">
+   		<a disabled class='disabledbutton subapp rgap2 link2' id="<?php echo $app['id']; ?>" href="javascript: subApp('<?php echo $app['application']; ?>', getPK())">
 			<em> 
 				<b> 
 					<img width=16 height=16 src='<?php echo $app['imageurl']; ?>' /> <?php echo $app['title']; ?>
@@ -1059,7 +1066,7 @@ class Crud  {
 					} else {
 ?>
    	<span title="<?php echo $app['tooltip']; ?>" class="wrapper"> 
-   		<a disabled class='subapp rgap2 link2' id="<?php echo $app['id']; ?>" href="javascript: <?php echo $app['script']; ?>(getPK())"> 
+   		<a disabled class='disabledbutton subapp rgap2 link2' id="<?php echo $app['id']; ?>" href="javascript: <?php echo $app['script']; ?>(getPK())"> 
    			<em> 
    				<b> 
    					<img width=16 height=16 src='<?php echo $app['imageurl']; ?>' /> <?php echo $app['title']; ?>
@@ -1181,7 +1188,11 @@ class Crud  {
 			callAjax(
 					"finddata.php", 
 					{ 
-						sql: "SELECT * FROM <?php echo $_SESSION['DB_PREFIX'];?>filterdata WHERE filterid = " + filterid
+						sql: "SELECT A.*, B.description " +
+							 "FROM <?php echo $_SESSION['DB_PREFIX'];?>filterdata A " +
+							 "INNER JOIN <?php echo $_SESSION['DB_PREFIX'];?>filter B " +
+							 "ON B.id = A.filterid " +
+							 "WHERE filterid = " + filterid
 					},
 					function(data) {
 						var i = 0;
@@ -1193,6 +1204,7 @@ class Crud  {
 							var node = data[i];
 							
 							$("#filter_" + node.columnname).val(node.value);
+							$("#filterform #currentfiltername").val(node.description);
 						}
 						
 						/* Filter post. */						
@@ -1240,6 +1252,9 @@ class Crud  {
 		}
 		
 		function filter() {
+<?php
+			$this->preFilterScriptEvent();
+?>
 			$("#filterdialog").dialog("open");
 		}
 	
@@ -1475,6 +1490,9 @@ class Crud  {
 		}
 		
 		function view(id) {
+<?php
+			$this->preViewScriptEvent();
+?>
 			currentCrudID = id;
 			
 			$("#crudcmd").val("view");
@@ -1674,14 +1692,6 @@ class Crud  {
 					var layout = new Array();
 					var info;
 					var colIndex = 0;
-
-					$(".link2").click(
-							function() {
-								$(".link2").removeClass("pressed");
-
-								$(this).addClass("pressed");
-							}
-						);
 					 
 				   	$(".multiselect").multiselect({
 				   			multiple: true
@@ -1767,24 +1777,21 @@ class Crud  {
 							?>
 									<?php echo $this->onDblClick; ?>(getSelectedRow().<?php echo $this->pkViewName; ?>);
 							<?php		
-								} else if ($this->allowEdit) {
-									if (isUserAccessPermitted('EditItem')) {
+								} else if ($this->allowEdit && isUserAccessPermitted('EditItem')) {
 							?> 
-										editSelectedRow();
+									editSelectedRow();
 							<?php
-									}
 									
-								} else if ($this->allowView) {
-									if (isUserAccessPermitted('ViewItem')) {
+								} else if ($this->allowView && isUserAccessPermitted('ViewItem')) {
 							?> 
-										viewSelectedRow();
+									viewSelectedRow();
 							<?php
-									}
 								}
 							?> 
 					        },						    
 						    onSelectRow: function(rowid) {
 						    	$(".subapp").removeAttr("disabled");
+						    	$(".subapp").removeClass("disabledbutton");
 								
 								<?php
 									if ($this->onClickCallback != "") {
@@ -1795,7 +1802,14 @@ class Crud  {
 							caption: "<?php echo $this->title; ?>"
 						
 						});
-					
+
+<?php 
+					if (isset($_GET['filtering']) && $_POST['currentfiltername'] != "") {
+?>
+						$(".ui-jqgrid-title").text("<?php echo $this->title . ": Filter selected - By " . $_POST['currentfiltername']; ?>");
+<?php
+					}
+?>
 					
 				    $('form').bind('submit', function() { 
 					        $(this).find('select').removeAttr('disabled'); 
@@ -1810,10 +1824,8 @@ class Crud  {
 						  	},  
 						  	function () { 
 								var child = $(this).find('ul');
-								var frame = $(this).find('iframe');
 								
 						  		child.hide();
-								frame.hide();
 						  	} 
 						); 
 				
@@ -1829,10 +1841,8 @@ class Crud  {
 						  	},  
 						  	function () { 
 								var child = $(this).find('ul');
-								var frame = $(this).find('iframe');
 								
 						  		child.hide();
-								frame.hide();
 						  	} 
 						); 
 					 					
@@ -2083,6 +2093,8 @@ class Crud  {
 			
 		function refreshData() {
 	    	$(".subapp").attr("disabled", true);
+	    	$(".subapp").addClass("disabledbutton");
+	    	$(".subapp").removeClass("pressed");
 
 			callAjax(
 					"finddata.php", 

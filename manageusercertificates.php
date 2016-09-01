@@ -13,7 +13,16 @@
 			$("#categoryid").trigger("change");
 			$("#certificateid").val(node.certificateid);
 			$("#certificateid").trigger("change");
+			$("#dateexpired").parent().parent().hide();
+			$("#sponsor").parent().parent().hide();
 <?php			
+		}
+		
+		public function postAddScriptEvent() {
+?>
+			$("#dateexpired").parent().parent().hide();
+			$("#sponsor").parent().parent().hide();
+<?php
 		}
 		
 		/* Post script event. */
@@ -36,19 +45,28 @@
 							
 							if (node.cardnumberrequired == "Y") {
 								$("#sponsor").attr("required", true);
+								$("#sponsor").parent().parent().show();
 								$("#sponsor").attr("disabled", false);
+								$("#sponsor").parent().prev().find(".requiredmarker").show();
 								
 							} else {
 								$("#sponsor").attr("required", false);
 								$("#sponsor").attr("disabled", true);
+								$("#sponsor").parent().parent().hide();
 								$("#sponsor").val("");
+								$("#sponsor").parent().prev().find(".requiredmarker").hide();
 							}
 							
 							if (node.expires == "Y") {
-								$("#validyears").attr("required", true);
+								$("#dateexpired").attr("required", true);
+								$("#dateexpired").parent().prev().find(".requiredmarker").show();
+								$("#dateexpired").parent().parent().show();
 								
 							} else {
-								$("#validyears").attr("required", false);
+								$("#dateexpired").attr("required", false);
+								$("#dateexpired").parent().parent().hide();
+								$("#dateexpired").val("");
+								$("#dateexpired").parent().prev().find(".requiredmarker").hide();
 							}
 						},
 						false
@@ -77,7 +95,7 @@
 	}
 
 	$crud = new CertificateCrud();
-	$crud->title = "Certificates";
+	$crud->title = "User Qualifications";
 	$crud->table = "{$_SESSION['DB_PREFIX']}usercertificate";
 	$crud->dialogwidth = 800;
 	$crud->sql = 
@@ -102,6 +120,7 @@
 				'length' 	 => 6,
 				'pk'		 => true,
 				'showInView' => false,
+				'filter'	 => false,
 				'editable'	 => false,
 				'bind' 	 	 => false,
 				'label' 	 => 'ID'
@@ -142,17 +161,10 @@
 				'table_name' => 'name'
 			),
 			array(
-				'name'       => 'datetaken',
+				'name'       => 'dateexpired',
 				'length' 	 => 15,
 				'datatype'	 => 'date',
-				'label' 	 => 'Date taken'
-			),
-			array(
-				'name'       => 'validyears',
-				'length' 	 => 15,
-				'align'		 => 'right',
-				'datatype'	 => 'integer',
-				'label' 	 => 'Valid (years)'
+				'label' 	 => 'Expiry Date'
 			),
 			array(
 				'name'       => 'sponsor',

@@ -53,6 +53,14 @@
 					address = address + node.postcode;
 				} 
 				
+				if (node.postcode != null && node.postcode != "") {
+					if (address != "") {
+						address = address + ", ";
+					}
+					
+					address = address + node.postcode;
+				} 
+				
 				return address;
 			}
 <?php			
@@ -60,8 +68,8 @@
 	}
 	
 	$crud = new CustomerCrud();
-	$crud->dialogwidth = 970;
-	$crud->title = "Customers";
+	$crud->dialogwidth = 770;
+	$crud->title = "Contractors";
 	$crud->table = "{$_SESSION['DB_PREFIX']}customer";
 	$crud->sql = "SELECT A.*
 				  FROM  {$_SESSION['DB_PREFIX']}customer A
@@ -88,7 +96,7 @@
 				'length' 	 => 60,
 				'showInView' => false,
 				'required'	 => false,
-				'label' 	 => 'Street'
+				'label' 	 => 'Address 1'
 			),
 			array(
 				'name'       => 'address2',
@@ -127,7 +135,7 @@
 			),
 			array(
 				'name'       => 'address',
-				'length' 	 => 70,
+				'length' 	 => 90,
 				'editable'   => false,
 				'required'	 => false,
 				'bind'		 => false,
@@ -138,33 +146,43 @@
 			array(
 				'name'       => 'email',
 				'required'	 => false,
+				'showInView' => false,
 				'length' 	 => 70,
 				'datatype'	 => 'email',
 				'label' 	 => 'Email'
 			),
 			array(
+				'name'       => 'website',
+				'required'	 => false,
+				'length' 	 => 60,
+				'datatype'	 => 'url',
+				'label' 	 => 'Web Site Address'
+			),
+			array(
 				'name'       => 'telephone',
-				'length' 	 => 12,
+				'length' 	 => 18,
 				'required'	 => false,
 				'datatype'	 => 'tel',
 				'label' 	 => 'Telephone'
 			),
 			array(
 				'name'       => 'fax',
-				'length' 	 => 12,
+				'length' 	 => 18,
+				'showInView' => false,
 				'required'	 => false,
 				'label' 	 => 'Fax'
 			),
 			array(
 				'name'       => 'contact',
-				'length' 	 => 25,
+				'length' 	 => 70,
 				'required'	 => false,
+				'showInView' => false,
 				'label' 	 => 'Contact'
 			),			
 			array(
 				'name'       => 'notes',
 				'length' 	 => 50,
-				'type'		 => 'TEXTAREA',
+				'type'		 => 'BASICTEXTAREA',
 				'showInView' => false,
 				'required'	 => false,
 				'label' 	 => 'Notes'
